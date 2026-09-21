@@ -1,18 +1,24 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:news_app/controllers/news_controller.dart';
 import 'package:news_app/models/news_article.dart';
 import 'package:news_app/utils/app_colors.dart';
 
 class NewsDetailView extends StatelessWidget {
+  NewsDetailView({super.key});
+
   final NewsArticle article = Get.arguments as NewsArticle;
+  final NewsController controller = Get.find<NewsController>();
 
   @override
   Widget build(BuildContext context) {
+    final isSaved = controller.isArticleSaved(article);
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -47,6 +53,10 @@ class NewsDetailView extends StatelessWidget {
                     ),
             ),
             actions: [
+              IconButton(
+                icon: Icon(isSaved ? Icons.bookmark : Icons.bookmark_border),
+                onPressed: () => controller.toggleSavedArticle(article),
+              ),
               IconButton(
                 icon: Icon(Icons.share),
                 onPressed: () => _shareArticle(),
@@ -93,7 +103,6 @@ class NewsDetailView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Source and Date
                   Row(
                     children: [
                       if (article.source?.name != null) ...[
@@ -103,7 +112,7 @@ class NewsDetailView extends StatelessWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.1),
+                            color: AppColors.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
@@ -129,8 +138,6 @@ class NewsDetailView extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 16),
-
-                  // Title
                   if (article.title != null) ...[
                     Text(
                       article.title!,
@@ -143,8 +150,6 @@ class NewsDetailView extends StatelessWidget {
                     ),
                     SizedBox(height: 16),
                   ],
-
-                  // Description
                   if (article.description != null) ...[
                     Text(
                       article.description!,
@@ -156,8 +161,6 @@ class NewsDetailView extends StatelessWidget {
                     ),
                     SizedBox(height: 20),
                   ],
-
-                  // Content
                   if (article.content != null) ...[
                     Text(
                       'Content',
@@ -178,8 +181,6 @@ class NewsDetailView extends StatelessWidget {
                     ),
                     SizedBox(height: 24),
                   ],
-
-                  // Read More Button
                   if (article.url != null) ...[
                     SizedBox(
                       width: double.infinity,
@@ -198,7 +199,6 @@ class NewsDetailView extends StatelessWidget {
                       ),
                     ),
                   ],
-
                   SizedBox(height: 32),
                 ],
               ),
@@ -211,9 +211,11 @@ class NewsDetailView extends StatelessWidget {
 
   void _shareArticle() {
     if (article.url != null) {
-      Share.share(
-        '${article.title ?? 'Check out this news'}\n\n${article.url!}',
-        subject: article.title,
+      SharePlus.instance.share(
+        ShareParams(
+          text: "${article.title ?? 'Check out this news'}\n\n${article.url!}",
+          subject: article.title,
+        ),
       );
     }
   }

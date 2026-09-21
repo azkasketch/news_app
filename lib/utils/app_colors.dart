@@ -12,12 +12,10 @@ class AppColors {
   static const Color onSurface = Color(0xFF121212);
   static const Color onError = Colors.white;
 
-  // Text colors
   static const Color textPrimary = Color(0xFF212121);
   static const Color textSecondary = Color(0xFF757575);
   static const Color textHint = Color(0xFFBDBDBD);
 
-  // Additional colors
   static const Color divider = Color(0xFFE0E0E0);
   static const Color cardShadow = Color(0x1A000000);
 }

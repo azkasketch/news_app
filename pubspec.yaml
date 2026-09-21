@@ -41,6 +41,7 @@ dependencies:
   cached_network_image: ^4.0.0
   timeago: ^3.7.1
   flutter_dotenv: ^6.0.1
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:

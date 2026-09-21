@@ -40,6 +40,14 @@ class NewsArticle {
       'source': source?.toJson(),
     };
   }
+
+  @override
+  bool operator ==(Object other) {
+    return other is NewsArticle && other.url == url;
+  }
+
+  @override
+  int get hashCode => url.hashCode;
 }
 
 class Source {
