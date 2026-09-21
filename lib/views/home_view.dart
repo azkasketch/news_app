@@ -15,11 +15,13 @@ class HomeView extends GetView<NewsController> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Obx(
       () => Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
         appBar: AppBar(
-          title: Text('News App'),
+          title: const Text('Curate'),
           centerTitle: true,
           actions: [
             IconButton(
@@ -29,10 +31,17 @@ class HomeView extends GetView<NewsController> {
               onPressed: controller.toggleDarkMode,
             ),
             IconButton(
-              icon: Icon(Icons.search),
+              icon: const Icon(Icons.search),
               onPressed: () => _showSearchDialog(context),
             ),
           ],
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 12),
+            child: Icon(
+              Icons.newspaper_outlined,
+              color: isDark ? Colors.white : AppColors.primary,
+            ),
+          ),
         ),
         body: IndexedStack(
           index: controller.selectedTab,
@@ -66,15 +75,15 @@ class HomeView extends GetView<NewsController> {
       children: [
         Container(
           width: double.infinity,
-          color: Theme.of(context).cardColor,
-          padding: EdgeInsets.symmetric(vertical: 10),
+          color: Theme.of(context).scaffoldBackgroundColor,
+          padding: const EdgeInsets.symmetric(vertical: 12),
           child: SizedBox(
-            height: 46,
+            height: 48,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               itemCount: controller.categories.length,
-              separatorBuilder: (context, index) => SizedBox(width: 8),
+              separatorBuilder: (context, index) => const SizedBox(width: 8),
               itemBuilder: (context, index) {
                 final category = controller.categories[index];
                 return Obx(
@@ -91,57 +100,72 @@ class HomeView extends GetView<NewsController> {
         Expanded(
           child: Obx(() {
             if (controller.isLoading) {
-              return LoadingShimmer();
+              return const LoadingShimmer();
             }
 
             if (controller.error.isNotEmpty) {
-              return _buildErrorWidget();
+              return _buildErrorWidget(context);
             }
 
             if (controller.articles.isEmpty) {
-              return _buildEmptyWidget();
+              return _buildEmptyWidget(context);
             }
 
             return RefreshIndicator(
               onRefresh: controller.refreshNews,
               child: ListView(
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 children: [
                   _buildHeroSection(controller.articles.first),
-                  SizedBox(height: 24),
-                  Text(
-                    'Top stories',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Top stories',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.3,
+                        ),
+                      ),
+                      Text(
+                        'More',
+                        style: TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   SizedBox(
-                    height: 180,
+                    height: 190,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: controller.articles.length > 3 ? 3 : controller.articles.length,
-                      separatorBuilder: (context, index) => SizedBox(width: 12),
+                      separatorBuilder: (context, index) => const SizedBox(width: 12),
                       itemBuilder: (context, index) {
                         final article = controller.articles[index + 1];
-                        return _buildTrendingCard(article);
+                        return _buildTrendingCard(context, article);
                       },
                     ),
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   Text(
                     'Latest',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.3,
                     ),
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   ...List.generate(
                     controller.articles.length > 4 ? controller.articles.length - 4 : 0,
                     (index) {
                       final article = controller.articles[index + 4];
                       return Padding(
-                        padding: EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.only(bottom: 12),
                         child: NewsCard(
                           article: article,
                           onTap: () => Get.toNamed(Routes.NEWS_DETAIL, arguments: article),
@@ -162,34 +186,50 @@ class HomeView extends GetView<NewsController> {
     return Obx(() {
       if (controller.savedArticles.isEmpty) {
         return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.bookmark_border, size: 64, color: AppColors.textHint),
-              SizedBox(height: 16),
-              Text(
-                'No saved articles yet',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            margin: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    color: AppColors.primarySoft,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Icon(Icons.bookmark_border, size: 56, color: AppColors.primary),
                 ),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Tap the bookmark icon to keep reading later',
-                style: TextStyle(color: AppColors.textSecondary),
-              ),
-            ],
+                const SizedBox(height: 20),
+                Text(
+                  'No saved articles yet',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Tap the bookmark icon to keep reading later',
+                  style: TextStyle(color: AppColors.textSecondary),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           ),
         );
       }
 
       return ListView.builder(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         itemCount: controller.savedArticles.length,
         itemBuilder: (context, index) {
           final article = controller.savedArticles[index];
           return Padding(
-            padding: EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.only(bottom: 12),
             child: NewsCard(
               article: article,
               onTap: () => Get.toNamed(Routes.NEWS_DETAIL, arguments: article),
@@ -200,57 +240,81 @@ class HomeView extends GetView<NewsController> {
     });
   }
 
-  Widget _buildErrorWidget() {
+  Widget _buildErrorWidget(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.error_outline, size: 64, color: AppColors.error),
-          SizedBox(height: 16),
-          Text(
-            'Something went wrong',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+      child: Container(
+        margin: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline, size: 56, color: AppColors.error),
+            const SizedBox(height: 16),
+            Text(
+              'Something went wrong',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: AppColors.textPrimary,
+              ),
             ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Please check your internet connection',
-            style: TextStyle(color: AppColors.textSecondary),
-          ),
-          SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: controller.refreshNews,
-            child: Text('Retry'),
-          ),
-        ],
+            const SizedBox(height: 8),
+            Text(
+              'Please check your internet connection',
+              style: TextStyle(color: AppColors.textSecondary),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: controller.refreshNews,
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildEmptyWidget() {
+  Widget _buildEmptyWidget(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.newspaper, size: 64, color: AppColors.textHint),
-          SizedBox(height: 16),
-          Text(
-            'No news available',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+      child: Container(
+        margin: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: AppColors.primarySoft,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Icon(Icons.newspaper_outlined, size: 52, color: AppColors.primary),
             ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Please try again later',
-            style: TextStyle(color: AppColors.textSecondary),
-          ),
-        ],
+            const SizedBox(height: 20),
+            Text(
+              'No news available',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Please try again later',
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -259,22 +323,22 @@ class HomeView extends GetView<NewsController> {
     return GestureDetector(
       onTap: () => Get.toNamed(Routes.NEWS_DETAIL, arguments: article),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(22),
         child: Stack(
           children: [
             SizedBox(
-              height: 220,
+              height: 250,
               width: double.infinity,
               child: CachedNetworkImage(
                 imageUrl: article.urlToImage ?? '',
                 fit: BoxFit.cover,
                 placeholder: (context, url) => Container(
                   color: AppColors.divider,
-                  child: Center(child: CircularProgressIndicator()),
+                  child: const Center(child: CircularProgressIndicator()),
                 ),
                 errorWidget: (context, url, error) => Container(
                   color: AppColors.divider,
-                  child: Icon(Icons.newspaper, size: 42, color: AppColors.textHint),
+                  child: const Icon(Icons.newspaper, size: 42, color: AppColors.textHint),
                 ),
               ),
             ),
@@ -284,7 +348,7 @@ class HomeView extends GetView<NewsController> {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Colors.black.withValues(alpha: 0.8)],
+                    colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
                   ),
                 ),
               ),
@@ -297,26 +361,26 @@ class HomeView extends GetView<NewsController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.9),
+                      color: AppColors.primary,
                       borderRadius: BorderRadius.circular(999),
                     ),
-                    child: Text(
+                    child: const Text(
                       'Breaking',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 11,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Text(
                     article.title ?? 'Headline news',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w800,
                       color: Colors.white,
                       height: 1.2,
                     ),
@@ -332,19 +396,19 @@ class HomeView extends GetView<NewsController> {
     );
   }
 
-  Widget _buildTrendingCard(NewsArticle article) {
+  Widget _buildTrendingCard(BuildContext context, NewsArticle article) {
     return GestureDetector(
       onTap: () => Get.toNamed(Routes.NEWS_DETAIL, arguments: article),
       child: Container(
         width: 220,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          color: Theme.of(Get.context!).cardColor,
+          borderRadius: BorderRadius.circular(18),
+          color: Theme.of(context).cardColor,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: Offset(0, 4),
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
@@ -352,7 +416,7 @@ class HomeView extends GetView<NewsController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
               child: CachedNetworkImage(
                 imageUrl: article.urlToImage ?? '',
                 height: 110,
@@ -365,17 +429,17 @@ class HomeView extends GetView<NewsController> {
                 errorWidget: (context, url, error) => Container(
                   height: 110,
                   color: AppColors.divider,
-                  child: Icon(Icons.image_not_supported, color: AppColors.textHint),
+                  child: const Icon(Icons.image_not_supported, color: AppColors.textHint),
                 ),
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
               child: Text(
                 article.title ?? '',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w700,
                   height: 1.4,
                 ),
                 maxLines: 2,

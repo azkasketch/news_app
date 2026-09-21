@@ -25,6 +25,7 @@ class NewsDetailView extends StatelessWidget {
           SliverAppBar(
             expandedHeight: 300,
             pinned: true,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             flexibleSpace: FlexibleSpaceBar(
               background: article.urlToImage != null
                   ? CachedNetworkImage(
@@ -32,11 +33,11 @@ class NewsDetailView extends StatelessWidget {
                       fit: BoxFit.cover,
                       placeholder: (context, url) => Container(
                         color: AppColors.divider,
-                        child: Center(child: CircularProgressIndicator()),
+                        child: const Center(child: CircularProgressIndicator()),
                       ),
                       errorWidget: (context, url, error) => Container(
                         color: AppColors.divider,
-                        child: Icon(
+                        child: const Icon(
                           Icons.image_not_supported,
                           size: 50,
                           color: AppColors.textHint,
@@ -45,7 +46,7 @@ class NewsDetailView extends StatelessWidget {
                     )
                   : Container(
                       color: AppColors.divider,
-                      child: Icon(
+                      child: const Icon(
                         Icons.newspaper,
                         size: 50,
                         color: AppColors.textHint,
@@ -58,7 +59,7 @@ class NewsDetailView extends StatelessWidget {
                 onPressed: () => controller.toggleSavedArticle(article),
               ),
               IconButton(
-                icon: Icon(Icons.share),
+                icon: const Icon(Icons.share),
                 onPressed: () => _shareArticle(),
               ),
               PopupMenuButton<String>(
@@ -72,7 +73,7 @@ class NewsDetailView extends StatelessWidget {
                       break;
                   }
                 },
-                itemBuilder: (context) => [
+                itemBuilder: (context) => const [
                   PopupMenuItem(
                     value: 'copy_link',
                     child: Row(
@@ -99,7 +100,7 @@ class NewsDetailView extends StatelessWidget {
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -107,79 +108,90 @@ class NewsDetailView extends StatelessWidget {
                     children: [
                       if (article.source?.name != null) ...[
                         Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.primary.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(4),
+                            color: AppColors.primarySoft,
+                            borderRadius: BorderRadius.circular(999),
                           ),
                           child: Text(
                             article.source!.name!,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: AppColors.primary,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
                             ),
                           ),
                         ),
-                        SizedBox(width: 12),
+                        const SizedBox(width: 12),
                       ],
                       if (article.publishedAt != null) ...[
                         Text(
                           timeago.format(DateTime.parse(article.publishedAt!)),
                           style: TextStyle(
-                            color: AppColors.textSecondary,
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white70
+                                : AppColors.textSecondary,
                             fontSize: 12,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
                     ],
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   if (article.title != null) ...[
                     Text(
                       article.title!,
                       style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                        height: 1.3,
+                        fontSize: 28,
+                        fontWeight: FontWeight.w800,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : AppColors.textPrimary,
+                        height: 1.25,
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                   ],
                   if (article.description != null) ...[
                     Text(
                       article.description!,
                       style: TextStyle(
                         fontSize: 16,
-                        color: AppColors.textSecondary,
-                        height: 1.5,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white70
+                            : AppColors.textSecondary,
+                        height: 1.6,
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                   ],
                   if (article.content != null) ...[
                     Text(
                       'Content',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w800,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : AppColors.textPrimary,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       article.content!,
                       style: TextStyle(
-                        fontSize: 16,
-                        color: AppColors.textPrimary,
-                        height: 1.6,
+                        fontSize: 15.5,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white70
+                            : AppColors.textPrimary,
+                        height: 1.7,
                       ),
                     ),
-                    SizedBox(height: 24),
+                    const SizedBox(height: 24),
                   ],
                   if (article.url != null) ...[
                     SizedBox(
@@ -187,19 +199,19 @@ class NewsDetailView extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: _openInBrowser,
                         style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 16),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           'Read Full Article',
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                         ),
                       ),
                     ),
                   ],
-                  SizedBox(height: 32),
+                  const SizedBox(height: 32),
                 ],
               ),
             ),

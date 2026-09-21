@@ -2,20 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:news_app/utils/app_colors.dart';
 
 class LoadingShimmer extends StatefulWidget {
+  const LoadingShimmer({super.key});
+
   @override
   _LoadingShimmerState createState() => _LoadingShimmerState();
 }
 
 class _LoadingShimmerState extends State<LoadingShimmer>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _animation;
+  late final AnimationController _animationController;
+  late final Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 1500),
       vsync: this,
     )..repeat();
 
@@ -32,51 +34,53 @@ class _LoadingShimmerState extends State<LoadingShimmer>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final baseColor = isDark ? const Color(0xFF2A2A2A) : AppColors.divider;
+
     return ListView.builder(
-      padding: EdgeInsets.all(16),
-      itemCount: 5,
+      padding: const EdgeInsets.all(16),
+      itemCount: 4,
       itemBuilder: (context, index) {
         return Card(
-          margin: EdgeInsets.only(bottom: 16),
-          elevation: 2,
+          margin: const EdgeInsets.only(bottom: 16),
+          elevation: 0,
+          color: isDark ? AppColors.darkSurface : AppColors.surface,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(
+              color: isDark ? Colors.white.withOpacity(0.05) : AppColors.divider,
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Image shimmer
               AnimatedBuilder(
                 animation: _animation,
                 builder: (context, child) {
                   return Container(
-                    height: 200,
+                    height: 190,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(12),
-                      ),
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
                       gradient: LinearGradient(
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
                         colors: [
-                          AppColors.divider,
-                          AppColors.divider.withOpacity(0.5),
-                          AppColors.divider,
+                          baseColor,
+                          baseColor.withOpacity(0.55),
+                          baseColor,
                         ],
-                        stops: [0.0, 0.5, 1.0],
+                        stops: const [0.0, 0.5, 1.0],
                         transform: GradientRotation(_animation.value * 3.14159),
                       ),
                     ),
                   );
                 },
               ),
-
               Padding(
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Source shimmer
                     AnimatedBuilder(
                       animation: _animation,
                       builder: (context, child) {
@@ -85,14 +89,12 @@ class _LoadingShimmerState extends State<LoadingShimmer>
                           width: 100,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(6),
-                            color: AppColors.divider,
+                            color: baseColor,
                           ),
                         );
                       },
                     ),
-                    SizedBox(height: 12),
-
-                    // Title shimmer
+                    const SizedBox(height: 12),
                     AnimatedBuilder(
                       animation: _animation,
                       builder: (context, child) {
@@ -104,25 +106,23 @@ class _LoadingShimmerState extends State<LoadingShimmer>
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
-                                color: AppColors.divider,
+                                color: baseColor,
                               ),
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             Container(
                               height: 16,
                               width: MediaQuery.of(context).size.width * 0.7,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
-                                color: AppColors.divider,
+                                color: baseColor,
                               ),
                             ),
                           ],
                         );
                       },
                     ),
-                    SizedBox(height: 12),
-
-                    // Description shimmer
+                    const SizedBox(height: 12),
                     AnimatedBuilder(
                       animation: _animation,
                       builder: (context, child) {
@@ -134,16 +134,16 @@ class _LoadingShimmerState extends State<LoadingShimmer>
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(7),
-                                color: AppColors.divider,
+                                color: baseColor,
                               ),
                             ),
-                            SizedBox(height: 6),
+                            const SizedBox(height: 6),
                             Container(
                               height: 14,
-                              width: MediaQuery.of(context).size.width * 0.5,
+                              width: MediaQuery.of(context).size.width * 0.52,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(7),
-                                color: AppColors.divider,
+                                color: baseColor,
                               ),
                             ),
                           ],

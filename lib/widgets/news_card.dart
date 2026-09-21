@@ -13,35 +13,42 @@ class NewsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Card(
-      margin: EdgeInsets.only(bottom: 16),
-      elevation: 2,
+      margin: const EdgeInsets.only(bottom: 16),
+      elevation: 0,
       shadowColor: AppColors.cardShadow,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: isDark ? AppColors.darkSurface : AppColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(
+          color: isDark ? Colors.white.withOpacity(0.05) : AppColors.divider,
+        ),
+      ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image
             if (article.urlToImage != null)
               ClipRRect(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
                 child: CachedNetworkImage(
                   imageUrl: article.urlToImage!,
-                  height: 200,
+                  height: 190,
                   width: double.infinity,
                   fit: BoxFit.cover,
                   placeholder: (context, url) => Container(
-                    height: 200,
+                    height: 190,
                     color: AppColors.divider,
-                    child: Center(child: CircularProgressIndicator()),
+                    child: const Center(child: CircularProgressIndicator()),
                   ),
                   errorWidget: (context, url, error) => Container(
-                    height: 200,
+                    height: 190,
                     color: AppColors.divider,
-                    child: Center(
+                    child: const Center(
                       child: Icon(
                         Icons.image_not_supported,
                         size: 40,
@@ -51,13 +58,11 @@ class NewsCard extends StatelessWidget {
                   ),
                 ),
               ),
-
             Padding(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Source and Date
                   Row(
                     children: [
                       if (article.source?.name != null) ...[
@@ -66,50 +71,47 @@ class NewsCard extends StatelessWidget {
                             article.source!.name!,
                             style: TextStyle(
                               color: AppColors.primary,
-                              fontSize: 12,
+                              fontSize: 11,
                               fontWeight: FontWeight.bold,
+                              letterSpacing: 0.04,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                       ],
                       if (article.publishedAt != null)
                         Text(
                           timeago.format(DateTime.parse(article.publishedAt!)),
                           style: TextStyle(
-                            color: AppColors.textSecondary,
-                            fontSize: 12,
+                            color: isDark ? Colors.white70 : AppColors.textSecondary,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                     ],
                   ),
-                  SizedBox(height: 12),
-
-                  // Title
+                  const SizedBox(height: 12),
                   if (article.title != null)
                     Text(
                       article.title!,
                       style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                        color: isDark ? Colors.white : AppColors.textPrimary,
                         height: 1.3,
                       ),
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
-
-                  SizedBox(height: 8),
-
-                  // Description
+                  const SizedBox(height: 8),
                   if (article.description != null)
                     Text(
                       article.description!,
                       style: TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 14,
-                        height: 1.4,
+                        color: isDark ? Colors.white70 : AppColors.textSecondary,
+                        fontSize: 13.5,
+                        height: 1.5,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,

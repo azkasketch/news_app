@@ -15,25 +15,33 @@ class CategoryChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
-      padding: EdgeInsets.only(right: 8),
-      child: FilterChip(
+      padding: const EdgeInsets.only(right: 8),
+      child: ChoiceChip(
         label: Text(label),
         selected: isSelected,
         onSelected: (_) => onTap(),
-        backgroundColor: Colors.grey[100],
-        selectedColor: AppColors.primary.withOpacity(0.2),
-        checkmarkColor: AppColors.primary,
+        backgroundColor: isDark ? AppColors.darkSurfaceElevated : AppColors.surfaceAlt,
+        selectedColor: AppColors.primary,
         labelStyle: TextStyle(
-          color: isSelected ? AppColors.primary : AppColors.textSecondary,
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          color: isSelected
+              ? Colors.white
+              : (isDark ? Colors.white70 : AppColors.textSecondary),
+          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+          fontSize: 12,
+        ),
+        avatar: isSelected ? const Icon(Icons.check, size: 14, color: Colors.white) : null,
+        side: BorderSide(
+          color: isSelected
+              ? AppColors.primary
+              : (isDark ? Colors.transparent : AppColors.divider),
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: BorderSide(
-            color: isSelected ? AppColors.primary : Colors.transparent,
-          ),
+          borderRadius: BorderRadius.circular(999),
         ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       ),
     );
   }
