@@ -25,6 +25,6 @@ class Constants {
   static const String defaultCountry = 'us';
 
   // App info
-  static const String appName = 'News App';
+  static const String appName = 'Curate';
   static const String appVersion = '1.0.0';
 }

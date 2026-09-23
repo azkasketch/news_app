@@ -4,8 +4,10 @@ import 'package:news_app/routes/app_pages.dart';
 import 'package:news_app/utils/app_colors.dart';
 
 class SplashView extends StatefulWidget {
+  const SplashView({super.key});
+
   @override
-  _SplashViewState createState() => _SplashViewState();
+  State<SplashView> createState() => _SplashViewState();
 }
 
 class _SplashViewState extends State<SplashView>
@@ -18,7 +20,7 @@ class _SplashViewState extends State<SplashView>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: Duration(seconds: 2),
+      duration: const Duration(seconds: 2),
       vsync: this,
     );
 
@@ -33,8 +35,10 @@ class _SplashViewState extends State<SplashView>
     _animationController.forward();
 
     // Navigate to home after 3 seconds
-    Future.delayed(Duration(seconds: 3), () {
-      Get.offAllNamed(Routes.HOME);
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        Get.offAllNamed(Routes.HOME);
+      }
     });
   }
 
@@ -67,7 +71,7 @@ class _SplashViewState extends State<SplashView>
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
+                            color: Colors.black.withValues(alpha: 0.2),
                             blurRadius: 20,
                             offset: Offset(0, 10),
                           ),
@@ -79,9 +83,9 @@ class _SplashViewState extends State<SplashView>
                         color: AppColors.primary,
                       ),
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     Text(
-                      'News App',
+                      'Curate',
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -89,16 +93,16 @@ class _SplashViewState extends State<SplashView>
                         letterSpacing: 1.5,
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Text(
                       'Stay Updated with Latest News',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                       ),
                     ),
-                    SizedBox(height: 50),
-                    CircularProgressIndicator(
+                    const SizedBox(height: 50),
+                    const CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                     ),
                   ],

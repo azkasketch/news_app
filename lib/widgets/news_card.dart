@@ -8,8 +8,7 @@ class NewsCard extends StatelessWidget {
   final NewsArticle article;
   final VoidCallback onTap;
 
-  const NewsCard({Key? key, required this.article, required this.onTap})
-    : super(key: key);
+  const NewsCard({super.key, required this.article, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +22,9 @@ class NewsCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
         side: BorderSide(
-          color: isDark ? Colors.white.withOpacity(0.05) : AppColors.divider,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.05)
+              : AppColors.divider,
         ),
       ),
       child: InkWell(
@@ -34,7 +35,9 @@ class NewsCard extends StatelessWidget {
           children: [
             if (article.urlToImage != null)
               ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20),
+                ),
                 child: CachedNetworkImage(
                   imageUrl: article.urlToImage!,
                   height: 190,
@@ -84,7 +87,9 @@ class NewsCard extends StatelessWidget {
                         Text(
                           timeago.format(DateTime.parse(article.publishedAt!)),
                           style: TextStyle(
-                            color: isDark ? Colors.white70 : AppColors.textSecondary,
+                            color: isDark
+                                ? Colors.white70
+                                : AppColors.textSecondary,
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                           ),
@@ -109,7 +114,9 @@ class NewsCard extends StatelessWidget {
                     Text(
                       article.description!,
                       style: TextStyle(
-                        color: isDark ? Colors.white70 : AppColors.textSecondary,
+                        color: isDark
+                            ? Colors.white70
+                            : AppColors.textSecondary,
                         fontSize: 13.5,
                         height: 1.5,
                       ),

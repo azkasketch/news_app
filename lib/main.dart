@@ -34,7 +34,6 @@ class MyApp extends StatelessWidget {
             primary: AppColors.primary,
             secondary: AppColors.secondary,
             surface: AppColors.surface,
-            background: AppColors.background,
             onPrimary: AppColors.onPrimary,
             onSurface: AppColors.onSurface,
           ),
@@ -71,7 +70,7 @@ class MyApp extends StatelessWidget {
             surfaceTintColor: Colors.transparent,
             indicatorColor: AppColors.primarySoft,
             shadowColor: AppColors.cardShadow,
-            labelTextStyle: MaterialStateProperty.resolveWith((states) {
+            labelTextStyle: WidgetStateProperty.resolveWith((states) {
               return const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
@@ -97,7 +96,6 @@ class MyApp extends StatelessWidget {
             primary: AppColors.primary,
             secondary: AppColors.secondary,
             surface: AppColors.darkSurface,
-            background: AppColors.darkBackground,
             onPrimary: Colors.white,
             onSurface: Colors.white,
           ),
@@ -131,8 +129,8 @@ class MyApp extends StatelessWidget {
           navigationBarTheme: NavigationBarThemeData(
             backgroundColor: AppColors.darkSurface,
             surfaceTintColor: Colors.transparent,
-            indicatorColor: AppColors.primary.withOpacity(0.18),
-            shadowColor: Colors.black.withOpacity(0.2),
+            indicatorColor: AppColors.primary.withValues(alpha: 0.18),
+            shadowColor: Colors.black.withValues(alpha: 0.2),
           ),
           dialogTheme: DialogThemeData(
             backgroundColor: AppColors.darkSurface,
@@ -142,7 +140,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
         themeMode: controller.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-        initialRoute: AppPages.INITIAL,
+        initialRoute: AppPages.initial,
         getPages: AppPages.routes,
         initialBinding: AppBindings(),
         debugShowCheckedModeBanner: false,

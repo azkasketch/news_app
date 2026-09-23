@@ -26,7 +26,9 @@ class HomeView extends GetView<NewsController> {
           actions: [
             IconButton(
               icon: Icon(
-                controller.isDarkMode ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
+                controller.isDarkMode
+                    ? Icons.light_mode_outlined
+                    : Icons.dark_mode_outlined,
               ),
               onPressed: controller.toggleDarkMode,
             ),
@@ -45,10 +47,7 @@ class HomeView extends GetView<NewsController> {
         ),
         body: IndexedStack(
           index: controller.selectedTab,
-          children: [
-            _buildHomeTab(context),
-            _buildSavedTab(context),
-          ],
+          children: [_buildHomeTab(context), _buildSavedTab(context)],
         ),
         bottomNavigationBar: NavigationBar(
           selectedIndex: controller.selectedTab,
@@ -119,22 +118,14 @@ class HomeView extends GetView<NewsController> {
                   _buildHeroSection(controller.articles.first),
                   const SizedBox(height: 24),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         'Top stories',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: -0.3,
-                        ),
-                      ),
-                      Text(
-                        'More',
-                        style: TextStyle(
-                          color: AppColors.primary,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -0.3,
+                            ),
                       ),
                     ],
                   ),
@@ -143,8 +134,11 @@ class HomeView extends GetView<NewsController> {
                     height: 190,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
-                      itemCount: controller.articles.length > 3 ? 3 : controller.articles.length,
-                      separatorBuilder: (context, index) => const SizedBox(width: 12),
+                      itemCount: controller.articles.length > 1
+                          ? (controller.articles.length - 1).clamp(0, 3)
+                          : 0,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(width: 12),
                       itemBuilder: (context, index) {
                         final article = controller.articles[index + 1];
                         return _buildTrendingCard(context, article);
@@ -161,14 +155,19 @@ class HomeView extends GetView<NewsController> {
                   ),
                   const SizedBox(height: 12),
                   ...List.generate(
-                    controller.articles.length > 4 ? controller.articles.length - 4 : 0,
+                    controller.articles.length > 4
+                        ? controller.articles.length - 4
+                        : 0,
                     (index) {
                       final article = controller.articles[index + 4];
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12),
                         child: NewsCard(
                           article: article,
-                          onTap: () => Get.toNamed(Routes.NEWS_DETAIL, arguments: article),
+                          onTap: () => Get.toNamed(
+                            Routes.NEWS_DETAIL,
+                            arguments: article,
+                          ),
                         ),
                       );
                     },
@@ -179,7 +178,9 @@ class HomeView extends GetView<NewsController> {
                       child: SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: controller.isLoadingMore ? null : controller.loadMoreNews,
+                          onPressed: controller.isLoadingMore
+                              ? null
+                              : controller.loadMoreNews,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primarySoft,
                             foregroundColor: AppColors.primary,
@@ -192,7 +193,9 @@ class HomeView extends GetView<NewsController> {
                               ? const SizedBox(
                                   width: 18,
                                   height: 18,
-                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
                                 )
                               : const Text(
                                   'Load more news',
@@ -230,7 +233,11 @@ class HomeView extends GetView<NewsController> {
                     color: AppColors.primarySoft,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: const Icon(Icons.bookmark_border, size: 56, color: AppColors.primary),
+                  child: const Icon(
+                    Icons.bookmark_border,
+                    size: 56,
+                    color: AppColors.primary,
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Text(
@@ -287,7 +294,7 @@ class HomeView extends GetView<NewsController> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
-                color: AppColors.textPrimary,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 8),
@@ -325,7 +332,11 @@ class HomeView extends GetView<NewsController> {
                 color: AppColors.primarySoft,
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Icon(Icons.newspaper_outlined, size: 52, color: AppColors.primary),
+              child: const Icon(
+                Icons.newspaper_outlined,
+                size: 52,
+                color: AppColors.primary,
+              ),
             ),
             const SizedBox(height: 20),
             Text(
@@ -333,7 +344,7 @@ class HomeView extends GetView<NewsController> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
-                color: AppColors.textPrimary,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 8),
@@ -366,7 +377,11 @@ class HomeView extends GetView<NewsController> {
                 ),
                 errorWidget: (context, url, error) => Container(
                   color: AppColors.divider,
-                  child: const Icon(Icons.newspaper, size: 42, color: AppColors.textHint),
+                  child: const Icon(
+                    Icons.newspaper,
+                    size: 42,
+                    color: AppColors.textHint,
+                  ),
                 ),
               ),
             ),
@@ -376,7 +391,10 @@ class HomeView extends GetView<NewsController> {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.8),
+                    ],
                   ),
                 ),
               ),
@@ -389,7 +407,10 @@ class HomeView extends GetView<NewsController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.primary,
                       borderRadius: BorderRadius.circular(999),
@@ -434,7 +455,7 @@ class HomeView extends GetView<NewsController> {
           color: Theme.of(context).cardColor,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 18,
               offset: const Offset(0, 8),
             ),
@@ -444,20 +465,23 @@ class HomeView extends GetView<NewsController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(18),
+              ),
               child: CachedNetworkImage(
                 imageUrl: article.urlToImage ?? '',
                 height: 110,
                 width: double.infinity,
                 fit: BoxFit.cover,
-                placeholder: (context, url) => Container(
-                  height: 110,
-                  color: AppColors.divider,
-                ),
+                placeholder: (context, url) =>
+                    Container(height: 110, color: AppColors.divider),
                 errorWidget: (context, url, error) => Container(
                   height: 110,
                   color: AppColors.divider,
-                  child: const Icon(Icons.image_not_supported, color: AppColors.textHint),
+                  child: const Icon(
+                    Icons.image_not_supported,
+                    color: AppColors.textHint,
+                  ),
                 ),
               ),
             ),
@@ -487,9 +511,7 @@ class HomeView extends GetView<NewsController> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Theme.of(context).cardColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: const Text(
           'Search Curate',
           style: TextStyle(fontWeight: FontWeight.w800),
@@ -501,28 +523,37 @@ class HomeView extends GetView<NewsController> {
             autofocus: true,
             decoration: InputDecoration(
               hintText: 'Search news, topics, or keywords',
-              prefixIcon: const Icon(Icons.search_rounded, color: AppColors.primary),
+              prefixIcon: const Icon(
+                Icons.search_rounded,
+                color: AppColors.primary,
+              ),
               filled: true,
               fillColor: Theme.of(context).brightness == Brightness.dark
                   ? AppColors.darkSurfaceElevated
                   : AppColors.surfaceAlt,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 16,
+              ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(18),
                 borderSide: BorderSide(
                   color: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white.withOpacity(0.08)
+                      ? Colors.white.withValues(alpha: 0.08)
                       : AppColors.divider,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(18),
-                borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 1.5,
+                ),
               ),
             ),
             onSubmitted: (value) {
-              if (value.isNotEmpty) {
-                controller.searchNews(value);
+              if (value.trim().isNotEmpty) {
+                controller.searchNews(value.trim());
                 Navigator.of(context).pop();
               }
             },
@@ -536,8 +567,8 @@ class HomeView extends GetView<NewsController> {
           ),
           ElevatedButton(
             onPressed: () {
-              if (searchController.text.isNotEmpty) {
-                controller.searchNews(searchController.text);
+              if (searchController.text.trim().isNotEmpty) {
+                controller.searchNews(searchController.text.trim());
                 Navigator.of(context).pop();
               }
             },

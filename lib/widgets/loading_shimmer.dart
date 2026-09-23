@@ -5,7 +5,7 @@ class LoadingShimmer extends StatefulWidget {
   const LoadingShimmer({super.key});
 
   @override
-  _LoadingShimmerState createState() => _LoadingShimmerState();
+  State<LoadingShimmer> createState() => _LoadingShimmerState();
 }
 
 class _LoadingShimmerState extends State<LoadingShimmer>
@@ -48,7 +48,9 @@ class _LoadingShimmerState extends State<LoadingShimmer>
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
             side: BorderSide(
-              color: isDark ? Colors.white.withOpacity(0.05) : AppColors.divider,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.05)
+                  : AppColors.divider,
             ),
           ),
           child: Column(
@@ -60,13 +62,15 @@ class _LoadingShimmerState extends State<LoadingShimmer>
                   return Container(
                     height: 190,
                     decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(20),
+                      ),
                       gradient: LinearGradient(
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
                         colors: [
                           baseColor,
-                          baseColor.withOpacity(0.55),
+                          baseColor.withValues(alpha: 0.55),
                           baseColor,
                         ],
                         stops: const [0.0, 0.5, 1.0],

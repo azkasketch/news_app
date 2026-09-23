@@ -7,11 +7,11 @@ class CategoryChip extends StatelessWidget {
   final VoidCallback onTap;
 
   const CategoryChip({
-    Key? key,
+    super.key,
     required this.label,
     required this.isSelected,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,9 @@ class CategoryChip extends StatelessWidget {
         label: Text(label),
         selected: isSelected,
         onSelected: (_) => onTap(),
-        backgroundColor: isDark ? AppColors.darkSurfaceElevated : AppColors.surfaceAlt,
+        backgroundColor: isDark
+            ? AppColors.darkSurfaceElevated
+            : AppColors.surfaceAlt,
         selectedColor: AppColors.primary,
         labelStyle: TextStyle(
           color: isSelected
@@ -32,15 +34,15 @@ class CategoryChip extends StatelessWidget {
           fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
           fontSize: 12,
         ),
-        avatar: isSelected ? const Icon(Icons.check, size: 14, color: Colors.white) : null,
+        avatar: isSelected
+            ? const Icon(Icons.check, size: 14, color: Colors.white)
+            : null,
         side: BorderSide(
           color: isSelected
               ? AppColors.primary
               : (isDark ? Colors.transparent : AppColors.divider),
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(999),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       ),
     );

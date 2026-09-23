@@ -15,8 +15,6 @@ class NewsDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isSaved = controller.isArticleSaved(article);
-
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -52,13 +50,19 @@ class NewsDetailView extends StatelessWidget {
                     ),
             ),
             actions: [
-              IconButton(
-                icon: Icon(
-                  isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-                  color: isSaved ? AppColors.primary : null,
-                ),
-                onPressed: () => controller.toggleSavedArticle(article),
-              ),
+              Obx(() {
+                final isSaved = controller.isArticleSaved(article);
+                return IconButton(
+                  tooltip: isSaved ? 'Remove from saved' : 'Save article',
+                  icon: Icon(
+                    isSaved
+                        ? Icons.bookmark_rounded
+                        : Icons.bookmark_border_rounded,
+                    color: isSaved ? AppColors.primary : null,
+                  ),
+                  onPressed: () => controller.toggleSavedArticle(article),
+                );
+              }),
             ],
           ),
           SliverToBoxAdapter(
@@ -94,7 +98,8 @@ class NewsDetailView extends StatelessWidget {
                         Text(
                           timeago.format(DateTime.parse(article.publishedAt!)),
                           style: TextStyle(
-                            color: Theme.of(context).brightness == Brightness.dark
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
                                 ? Colors.white70
                                 : AppColors.textSecondary,
                             fontSize: 12,
@@ -169,7 +174,10 @@ class NewsDetailView extends StatelessWidget {
                         ),
                         child: const Text(
                           'Read Full Article',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ),

@@ -62,7 +62,10 @@ class NewsController extends GetxController {
     await prefs.setStringList('saved_articles', encoded);
   }
 
-  Future<void> fetchTopHeadlines({String? category, bool append = false}) async {
+  Future<void> fetchTopHeadlines({
+    String? category,
+    bool append = false,
+  }) async {
     try {
       if (append) {
         _isLoadingMore.value = true;
@@ -82,11 +85,16 @@ class NewsController extends GetxController {
       if (append) {
         final existingUrls = _articles.map((article) => article.url).toSet();
         final uniqueArticles = response.articles
-            .where((article) => article.url != null && !existingUrls.contains(article.url))
+            .where(
+              (article) =>
+                  article.url != null && !existingUrls.contains(article.url),
+            )
             .toList();
         _articles.addAll(uniqueArticles);
         _currentPage.value = page;
-        _hasMore.value = uniqueArticles.length >= 20 && response.totalResults > _articles.length;
+        _hasMore.value =
+            uniqueArticles.length >= 20 &&
+            response.totalResults > _articles.length;
       } else {
         _articles.assignAll(response.articles);
         _currentPage.value = 1;
@@ -122,14 +130,17 @@ class NewsController extends GetxController {
   }
 
   Future<void> searchNews(String query) async {
-    if (query.isEmpty) return;
+    final normalizedQuery = query.trim();
+    if (normalizedQuery.isEmpty) return;
 
     try {
       _isLoading.value = true;
       _error.value = '';
+      _hasMore.value = false;
+      _currentPage.value = 1;
 
-      final response = await _newsService.searchNews(query: query);
-      _articles.value = response.articles;
+      final response = await _newsService.searchNews(query: normalizedQuery);
+      _articles.assignAll(response.articles);
     } catch (e) {
       _error.value = e.toString();
       Get.snackbar(
@@ -147,13 +158,17 @@ class NewsController extends GetxController {
   }
 
   bool isArticleSaved(NewsArticle article) {
-    return _savedArticles.any((savedArticle) => savedArticle.url == article.url);
+    return _savedArticles.any(
+      (savedArticle) => savedArticle.url == article.url,
+    );
   }
 
   Future<void> toggleSavedArticle(NewsArticle article) async {
     final isSaved = isArticleSaved(article);
     if (isSaved) {
-      _savedArticles.removeWhere((savedArticle) => savedArticle.url == article.url);
+      _savedArticles.removeWhere(
+        (savedArticle) => savedArticle.url == article.url,
+      );
     } else {
       _savedArticles.add(article);
     }
