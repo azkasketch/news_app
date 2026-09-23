@@ -11,20 +11,25 @@ class NewsController extends GetxController {
   final NewsService _newsService = NewsService();
 
   final _isLoading = false.obs;
+  final _isLoadingMore = false.obs;
   final _articles = <NewsArticle>[].obs;
   final _selectedCategory = 'general'.obs;
   final _error = ''.obs;
   final _savedArticles = <NewsArticle>[].obs;
   final _selectedTab = 0.obs;
   final _isDarkMode = false.obs;
+  final _currentPage = 1.obs;
+  final _hasMore = true.obs;
 
   bool get isLoading => _isLoading.value;
+  bool get isLoadingMore => _isLoadingMore.value;
   List<NewsArticle> get articles => _articles;
   String get selectedCategory => _selectedCategory.value;
   String get error => _error.value;
   List<NewsArticle> get savedArticles => _savedArticles;
   int get selectedTab => _selectedTab.value;
   bool get isDarkMode => _isDarkMode.value;
+  bool get hasMore => _hasMore.value;
   List<String> get categories => Constants.categories;
 
   @override
@@ -57,16 +62,36 @@ class NewsController extends GetxController {
     await prefs.setStringList('saved_articles', encoded);
   }
 
-  Future<void> fetchTopHeadlines({String? category}) async {
+  Future<void> fetchTopHeadlines({String? category, bool append = false}) async {
     try {
-      _isLoading.value = true;
+      if (append) {
+        _isLoadingMore.value = true;
+      } else {
+        _isLoading.value = true;
+        _currentPage.value = 1;
+        _hasMore.value = true;
+      }
       _error.value = '';
 
+      final page = append ? _currentPage.value + 1 : 1;
       final response = await _newsService.getTopHeadlines(
         category: category ?? _selectedCategory.value,
+        page: page,
       );
 
-      _articles.value = response.articles;
+      if (append) {
+        final existingUrls = _articles.map((article) => article.url).toSet();
+        final uniqueArticles = response.articles
+            .where((article) => article.url != null && !existingUrls.contains(article.url))
+            .toList();
+        _articles.addAll(uniqueArticles);
+        _currentPage.value = page;
+        _hasMore.value = uniqueArticles.length >= 20 && response.totalResults > _articles.length;
+      } else {
+        _articles.assignAll(response.articles);
+        _currentPage.value = 1;
+        _hasMore.value = response.totalResults > _articles.length;
+      }
     } catch (e) {
       _error.value = e.toString();
       Get.snackbar(
@@ -76,7 +101,13 @@ class NewsController extends GetxController {
       );
     } finally {
       _isLoading.value = false;
+      _isLoadingMore.value = false;
     }
+  }
+
+  Future<void> loadMoreNews() async {
+    if (!hasMore || isLoading || isLoadingMore) return;
+    await fetchTopHeadlines(category: _selectedCategory.value, append: true);
   }
 
   Future<void> refreshNews() async {

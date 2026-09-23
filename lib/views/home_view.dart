@@ -173,6 +173,34 @@ class HomeView extends GetView<NewsController> {
                       );
                     },
                   ),
+                  if (controller.hasMore)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8, bottom: 20),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: controller.isLoadingMore ? null : controller.loadMoreNews,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primarySoft,
+                            foregroundColor: AppColors.primary,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          child: controller.isLoadingMore
+                              ? const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                )
+                              : const Text(
+                                  'Load more news',
+                                  style: TextStyle(fontWeight: FontWeight.w700),
+                                ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             );
@@ -458,24 +486,53 @@ class HomeView extends GetView<NewsController> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Search News'),
-        content: TextField(
-          controller: searchController,
-          decoration: InputDecoration(
-            hintText: 'Enter search term...',
-            border: OutlineInputBorder(),
-          ),
-          onSubmitted: (value) {
-            if (value.isNotEmpty) {
-              controller.searchNews(value);
-              Navigator.of(context).pop();
-            }
-          },
+        backgroundColor: Theme.of(context).cardColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
         ),
+        title: const Text(
+          'Search Curate',
+          style: TextStyle(fontWeight: FontWeight.w800),
+        ),
+        content: SizedBox(
+          width: 320,
+          child: TextField(
+            controller: searchController,
+            autofocus: true,
+            decoration: InputDecoration(
+              hintText: 'Search news, topics, or keywords',
+              prefixIcon: const Icon(Icons.search_rounded, color: AppColors.primary),
+              filled: true,
+              fillColor: Theme.of(context).brightness == Brightness.dark
+                  ? AppColors.darkSurfaceElevated
+                  : AppColors.surfaceAlt,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(18),
+                borderSide: BorderSide(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white.withOpacity(0.08)
+                      : AppColors.divider,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(18),
+                borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+              ),
+            ),
+            onSubmitted: (value) {
+              if (value.isNotEmpty) {
+                controller.searchNews(value);
+                Navigator.of(context).pop();
+              }
+            },
+          ),
+        ),
+        actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -484,7 +541,7 @@ class HomeView extends GetView<NewsController> {
                 Navigator.of(context).pop();
               }
             },
-            child: Text('Search'),
+            child: const Text('Search'),
           ),
         ],
       ),

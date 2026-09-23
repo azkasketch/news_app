@@ -1,8 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:news_app/controllers/news_controller.dart';
@@ -55,46 +53,11 @@ class NewsDetailView extends StatelessWidget {
             ),
             actions: [
               IconButton(
-                icon: Icon(isSaved ? Icons.bookmark : Icons.bookmark_border),
+                icon: Icon(
+                  isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                  color: isSaved ? AppColors.primary : null,
+                ),
                 onPressed: () => controller.toggleSavedArticle(article),
-              ),
-              IconButton(
-                icon: const Icon(Icons.share),
-                onPressed: () => _shareArticle(),
-              ),
-              PopupMenuButton<String>(
-                onSelected: (value) {
-                  switch (value) {
-                    case 'copy_link':
-                      _copyLink();
-                      break;
-                    case 'open_browser':
-                      _openInBrowser();
-                      break;
-                  }
-                },
-                itemBuilder: (context) => const [
-                  PopupMenuItem(
-                    value: 'copy_link',
-                    child: Row(
-                      children: [
-                        Icon(Icons.copy),
-                        SizedBox(width: 8),
-                        Text('Copy Link'),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 'open_browser',
-                    child: Row(
-                      children: [
-                        Icon(Icons.open_in_browser),
-                        SizedBox(width: 8),
-                        Text('Open in Browser'),
-                      ],
-                    ),
-                  ),
-                ],
               ),
             ],
           ),
@@ -219,29 +182,6 @@ class NewsDetailView extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  void _shareArticle() {
-    if (article.url != null) {
-      SharePlus.instance.share(
-        ShareParams(
-          text: "${article.title ?? 'Check out this news'}\n\n${article.url!}",
-          subject: article.title,
-        ),
-      );
-    }
-  }
-
-  void _copyLink() {
-    if (article.url != null) {
-      Clipboard.setData(ClipboardData(text: article.url!));
-      Get.snackbar(
-        'Success',
-        'Link copied to clipboard',
-        snackPosition: SnackPosition.BOTTOM,
-        duration: Duration(seconds: 2),
-      );
-    }
   }
 
   void _openInBrowser() async {
